@@ -72,7 +72,7 @@ const FilesPage: React.FC = () => {
     try {
       const data = await fileService.getFiles();
       // Transform the data to match your component's expected structure
-      const transformedData = data.map((file: any) => ({
+      const transformedData = data.map((file: { id: number; file_name: string; file: string; file_size: number; uploaded_at: string }) => ({
         id: file.id,
         filename: file.file_name.split('/').pop() || file.file_name, // Extract actual filename
         file_type: getFileTypeFromUrl(file.file), // Determine file type
@@ -129,10 +129,19 @@ const FilesPage: React.FC = () => {
       setFiles(files.filter((file) => file.id !== fileToDelete.id));
       toast.success(`${fileToDelete.filename} deleted successfully`);
     } catch (error) {
-      console.error("Failed to delete file:", error);
-      toast.error("Failed to delete file");
+        console.error("Failed to delete file:", error);
+
+        // Log the error details for debugging
+        if (error instanceof Error) {
+          console.error("Error message:", error.message);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+
+        toast.error("Failed to delete file");
+    } finally {
+      setFileToDelete(null);
     }
-    setFileToDelete(null);
   };
 
   const handleDownload = (file: FileItem) => {
