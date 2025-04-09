@@ -24,7 +24,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>({
+    id: 1,
+    username: "lokeshkarra",
+    email: "lokeshkarra@example.com",
+    profile_picture: "http://127.0.0.1:8000/api/auth/profile/picture/proxy/",
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserProfile = async () => {
