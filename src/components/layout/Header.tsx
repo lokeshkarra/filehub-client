@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -13,9 +12,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Settings, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatBytes } from "@/lib/utils";
+import { useProfilePicture } from "@/hooks/useProfilePicture";
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
+  const profilePictureUrl = useProfilePicture();
 
   const getInitials = (name: string) => {
     return name
@@ -28,7 +29,7 @@ const Header: React.FC = () => {
   return (
     <header className="h-16 border-b bg-white dark:bg-gray-800 flex items-center justify-between px-6">
       <div className="flex-1">
-        <h1 className="text-2xl font-semibold text-gray-800 dark:text-white hidden md:block">
+        <h1 className="text-2xl font-semibold text-grey-800 dark:text-white hidden md:block">
           FileHub
         </h1>
       </div>
@@ -49,10 +50,18 @@ const Header: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center space-x-2 focus:outline-none">
-              <Avatar className="h-9 w-9 border border-gray-200 dark:border-gray-700">
-                <AvatarImage src={user?.profile_picture} />
-                <AvatarFallback>
-                  {user?.username ? getInitials(user.username) : "U"}
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={profilePictureUrl || ""}
+                  alt="Profile Picture"
+                  className="object-cover"
+                  onError={(e) => {
+                    console.error("Failed to load profile picture");
+                    e.currentTarget.src = ""; // Clear the src to show fallback
+                  }}
+                />
+                <AvatarFallback className="bg-filehub text-white">
+                  {user?.username ? user.username[0].toUpperCase() : "U"}
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium hidden md:block">{user?.username}</span>
